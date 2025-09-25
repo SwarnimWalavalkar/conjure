@@ -20,7 +20,7 @@ app.get("/health", async (c) => {
     status: "ok",
     version:
       process.env.npm_package_version ??
-      (await import("../package.json")).default.version,
+      (await import("../package.json").catch(() => undefined))?.default.version,
   });
 });
 
