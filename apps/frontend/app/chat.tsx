@@ -36,21 +36,21 @@ import { useSharedChatContext } from "@/lib/chat-context";
 import { useSandboxStore } from "@/app/state";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { DefaultChatTransport } from "ai";
-import { useThreadsStore } from "@/lib/chat-threads";
+import { useSessionsStore } from "@/lib/chat-sessions";
 
 export function Chat({ className }: { className?: string }) {
   const [input, setInput] = useState("");
   const { chat } = useSharedChatContext();
-  const { selectedId, threadsById, saveMessages, ensureDefaultThread } =
-    useThreadsStore();
+  const { selectedId, sessionsById, saveMessages, ensureDefaultSession } =
+    useSessionsStore();
   const isSwitchingRef = useRef(false);
 
-  // Ensure there's at least one thread
+  // Ensure there's at least one session
   useEffect(() => {
-    ensureDefaultThread();
-  }, [ensureDefaultThread]);
+    ensureDefaultSession();
+  }, [ensureDefaultSession]);
 
-  // Provide initial messages for current thread
+  // Provide initial messages for current session
   const { messages, sendMessage, status, setMessages } = useChat({ chat });
   const { setChatStatus } = useSandboxStore();
 
@@ -68,30 +68,30 @@ export function Chat({ className }: { className?: string }) {
     setChatStatus(status);
   }, [status, setChatStatus]);
 
-  // When the selected thread changes, swap the UI messages to that thread first
+  // When the selected session changes, swap the UI messages to that session first
   useEffect(() => {
     if (!selectedId) return;
-    const nextMessages = threadsById[selectedId]?.messages ?? [];
+    const nextMessages = sessionsById[selectedId]?.messages ?? [];
     isSwitchingRef.current = true;
     setMessages(nextMessages as any);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedId]);
 
-  // Persist messages to the selected thread whenever they change
+  // Persist messages to the selected session whenever they change
   useEffect(() => {
     if (!selectedId) return;
     if (isSwitchingRef.current) return;
     saveMessages(selectedId, messages as any);
   }, [messages, selectedId, saveMessages]);
 
-  // Clear the switching flag once the chat messages match the selected thread's messages
+  // Clear the switching flag once the chat messages match the selected session's messages
   useEffect(() => {
     if (!selectedId) return;
-    const threadMessages = threadsById[selectedId]?.messages ?? [];
-    if (arraysShallowEqualById(messages as any[], threadMessages as any[])) {
+    const sessionMessages = sessionsById[selectedId]?.messages ?? [];
+    if (arraysShallowEqualById(messages as any[], sessionMessages as any[])) {
       isSwitchingRef.current = false;
     }
-  }, [messages, selectedId, threadsById]);
+  }, [messages, selectedId, sessionsById]);
 
   function arraysShallowEqualById(a: any[], b: any[]) {
     if (a.length !== b.length) return false;

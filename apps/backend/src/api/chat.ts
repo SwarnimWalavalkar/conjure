@@ -35,6 +35,13 @@ app.post(
       execute: ({ writer: dataStream }) => {
         const result = streamText({
           model: openrouter(config.DEFAULT_LLM),
+          providerOptions: {
+            openrouter: {
+              reasoning: {
+                effort: "low",
+              },
+            },
+          },
           system: systemPrompt(),
           messages: modelMessages,
           tools: getTools({

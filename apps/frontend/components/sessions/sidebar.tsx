@@ -5,27 +5,27 @@ import { Panel, PanelHeader } from "@/components/panels/panels";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
-import { useThreadsStore } from "@/lib/chat-threads";
+import { useSessionsStore } from "@/lib/chat-sessions";
 import { MessageSquare, Plus, Trash2 } from "lucide-react";
 
-export function ThreadSidebar({ className }: { className?: string }) {
+export function SessionSidebar({ className }: { className?: string }) {
   const {
-    threadOrder,
-    threadsById,
+    sessionOrder,
+    sessionsById,
     selectedId,
-    createThread,
-    selectThread,
-    deleteThread,
-    ensureDefaultThread,
-  } = useThreadsStore();
+    createSession,
+    selectSession,
+    deleteSession,
+    ensureDefaultSession,
+  } = useSessionsStore();
 
   useEffect(() => {
-    ensureDefaultThread();
-  }, [ensureDefaultThread]);
+    ensureDefaultSession();
+  }, [ensureDefaultSession]);
 
   const items = useMemo(
-    () => threadOrder.map((id) => threadsById[id]).filter(Boolean),
-    [threadOrder, threadsById]
+    () => sessionOrder.map((id) => sessionsById[id]).filter(Boolean),
+    [sessionOrder, sessionsById]
   );
 
   return (
@@ -33,10 +33,10 @@ export function ThreadSidebar({ className }: { className?: string }) {
       <PanelHeader>
         <div className="flex items-center font-mono font-semibold uppercase">
           <MessageSquare className="mr-2 w-4" />
-          Threads
+          Sessions
         </div>
         <div className="ml-auto">
-          <Button size="icon" variant="ghost" onClick={() => createThread()}>
+          <Button size="icon" variant="ghost" onClick={() => createSession()}>
             <Plus className="w-4 h-4" />
           </Button>
         </div>
@@ -44,34 +44,34 @@ export function ThreadSidebar({ className }: { className?: string }) {
       <ScrollArea className="flex-1">
         <div className="p-2 space-y-1">
           {items.length === 0 ? (
-            <div className="text-xs text-muted-foreground">No threads yet</div>
+            <div className="text-xs text-muted-foreground">No sessions yet</div>
           ) : (
-            items.map((thread) => (
+            items.map((session) => (
               <div
-                key={thread.id}
+                key={session.id}
                 className={cn(
                   "group flex items-center gap-2 rounded-sm border border-transparent hover:border-border",
-                  selectedId === thread.id ? "bg-muted/50" : ""
+                  selectedId === session.id ? "bg-muted/50" : ""
                 )}
               >
                 <button
                   type="button"
-                  onClick={() => selectThread(thread.id)}
+                  onClick={() => selectSession(session.id)}
                   className={cn(
                     "flex-1 truncate text-left p-2 text-xs",
-                    selectedId === thread.id
+                    selectedId === session.id
                       ? "font-medium"
                       : "text-foreground/90"
                   )}
-                  title={thread.title || "New Chat"}
+                  title={session.title || "New Chat"}
                 >
-                  {thread.title || "New Chat"}
+                  {session.title || "New Chat"}
                 </button>
                 <button
                   type="button"
                   className="opacity-0 group-hover:opacity-100 p-1 text-muted-foreground hover:text-foreground"
-                  onClick={() => deleteThread(thread.id)}
-                  aria-label="Delete thread"
+                  onClick={() => deleteSession(session.id)}
+                  aria-label="Delete session"
                   title="Delete"
                 >
                   <Trash2 className="w-3.5 h-3.5" />

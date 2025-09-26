@@ -20,9 +20,7 @@ export function CommandsLogs(props: {
     <Panel className={props.className}>
       <PanelHeader>
         <SquareChevronRight className="mr-2 w-4" />
-        <span className="font-mono uppercase font-semibold">
-          Sandbox Output
-        </span>
+        <span className="font-mono uppercase font-semibold">Sandbox Logs</span>
       </PanelHeader>
       <div className="h-[calc(100%-2rem)]">
         <ScrollArea className="h-full">
