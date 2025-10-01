@@ -3,7 +3,7 @@ import {
   createSandboxDataSchema,
   generatingFilesDataSchema,
   runCommandDataSchema,
-  getSandboxUrlDataSchema,
+  webSearchDataSchema,
   researchUpdateDataSchema,
 } from "./ui-data-parts.js";
 
@@ -22,8 +22,8 @@ export const uiEventSchema = z.discriminatedUnion("type", [
     data: runCommandDataSchema,
   }),
   z.object({
-    type: z.literal("data-get-sandbox-url"),
-    data: getSandboxUrlDataSchema,
+    type: z.literal("data-web-search"),
+    data: webSearchDataSchema,
   }),
   z.object({
     type: z.literal("data-researchUpdate"),

@@ -4,6 +4,7 @@ import { getRichError } from "../../../../utils/getRichError.js";
 import { tool } from "ai";
 import z from "zod/v3";
 import { emitUIEvent } from "../../../../utils/uiTransport.js";
+import prompt from "./prompt.js";
 
 interface Params {
   dataStream: UIMessageStreamWriter;
@@ -11,7 +12,7 @@ interface Params {
 
 export const runCommand = ({ dataStream }: Params) =>
   tool({
-    description: "Use this tool to run a command in a sandbox",
+    description: prompt(),
     inputSchema: z.object({
       sandboxId: z
         .string()

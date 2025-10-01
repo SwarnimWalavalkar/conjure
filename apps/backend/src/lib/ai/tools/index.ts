@@ -2,8 +2,8 @@ import type { ModelMessage, UIMessageStreamWriter } from "ai";
 import { deepResearch } from "./deepResearch/index.js";
 import { createSandbox } from "./createSandbox/index.js";
 import { generateFiles } from "./generateFiles/index.js";
-import { getSandboxURL } from "./getSandboxURL/getSandboxURL.js";
 import { runCommand } from "./runCommand/runCommand.js";
+import { webSearch } from "./webSearch/index.js";
 
 export function getTools({
   dataStream,
@@ -19,6 +19,6 @@ export function getTools({
     createSandbox: createSandbox({ dataStream }),
     generateFiles: generateFiles({ dataStream }),
     runCommand: runCommand({ dataStream }),
-    getSandboxURL: getSandboxURL({ dataStream }),
+    webSearch: webSearch({ dataStream }),
   };
 }

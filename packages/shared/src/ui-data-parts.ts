@@ -29,9 +29,20 @@ export const runCommandDataSchema = z.object({
   error: errorSchema.optional(),
 });
 
-export const getSandboxUrlDataSchema = z.object({
-  url: z.string().url().optional(),
-  status: z.enum(["loading", "done"]).optional(),
+export const webSearchDataSchema = z.object({
+  title: z.string().optional(),
+  status: z.enum(["running", "completed", "error"]).optional(),
+  queries: z.array(z.string()).optional(),
+  results: z
+    .array(
+      z.object({
+        title: z.string(),
+        url: z.string(),
+        content: z.string(),
+      })
+    )
+    .optional(),
+  error: errorSchema.optional(),
 });
 
 // Deep research updates streamed by backend deepResearch tool
@@ -49,7 +60,7 @@ export const researchUpdateDataSchema = z.object({
       z.object({
         title: z.string().optional(),
         url: z.string().optional(),
-        content: z.string().optional(),
+        favicon: z.string().optional(),
       })
     )
     .optional(),
@@ -59,7 +70,7 @@ export const dataPartSchema = z.object({
   "create-sandbox": createSandboxDataSchema,
   "generating-files": generatingFilesDataSchema,
   "run-command": runCommandDataSchema,
-  "get-sandbox-url": getSandboxUrlDataSchema,
+  "web-search": webSearchDataSchema,
   researchUpdate: researchUpdateDataSchema,
 });
 
@@ -70,5 +81,5 @@ export type UIPartType =
   | "data-create-sandbox"
   | "data-generating-files"
   | "data-run-command"
-  | "data-get-sandbox-url"
+  | "data-web-search"
   | "data-researchUpdate";

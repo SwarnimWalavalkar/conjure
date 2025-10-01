@@ -6,6 +6,7 @@ import { tool } from "ai";
 import z from "zod/v3";
 import { getWriteFiles } from "./getWriteFiles.js";
 import { emitUIEvent } from "../../../../utils/uiTransport.js";
+import prompt from "./prompt.js";
 
 interface Params {
   dataStream: UIMessageStreamWriter;
@@ -13,7 +14,7 @@ interface Params {
 
 export const generateFiles = ({ dataStream }: Params) =>
   tool({
-    description: "Use this tool to generate files",
+    description: prompt(),
     inputSchema: z.object({
       sandboxId: z.string(),
       paths: z.array(z.string()),

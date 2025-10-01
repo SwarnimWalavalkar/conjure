@@ -14,7 +14,6 @@ import { systemPrompt } from "../lib/ai/prompts/system.js";
 import { openrouter } from "../lib/ai/providers/openrouter.js";
 import config from "../config/index.js";
 import { getTools } from "../lib/ai/tools/index.js";
-import { stream } from "hono/streaming";
 
 const app = new Hono<{ Variables: Variables }>();
 
@@ -82,11 +81,6 @@ app.post(
       generateId: () => generateId(),
     });
 
-    // The AI SDK's UI message stream yields chunks of UI message objects.
-    // Convert that into an HTTP Response suitable for streaming by the
-    // helper which serializes the chunks correctly. Returning the response
-    // avoids passing raw objects into a byte-level stream which causes the
-    // "chunk must be string|Buffer|Uint8Array" error.
     return createUIMessageStreamResponse({
       status: 200,
       statusText: "OK",

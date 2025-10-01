@@ -10,6 +10,7 @@ import { Exa } from "exa-js";
 import config from "../../../../config/index.js";
 import { openrouter } from "../../providers/openrouter.js";
 import { emitUIEvent } from "../../../../utils/uiTransport.js";
+import prompt from "./prompt.js";
 
 // Configuration Schema
 export const DeepResearchConfigSchema = z.object({
@@ -588,21 +589,7 @@ export const deepResearch = ({
   messages: Array<ModelMessage>;
 }) =>
   tool({
-    description: `Conducts comprehensive, autonomous research using web search and multi-step analysis. 
-
-This tool:
-- Automatically clarifies ambiguous requests
-- Breaks down complex topics into focused research areas  
-- Searches multiple web sources for current information
-- Iteratively deepens research based on findings
-- Synthesizes results into a detailed, well-cited report
-
-Best for: Complex questions requiring in-depth analysis, current events, comparative studies, market research, technical deep-dives.
-
-Important:
-- If this tool previously returned a clarifying question, call it again after the user responds
-- Successful research creates a detailed report - no need to repeat findings
-`,
+    description: prompt(),
     inputSchema: z.object({}),
     execute: async () => {
       const config: DeepResearchConfig = createDeepResearchConfig();

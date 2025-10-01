@@ -33,7 +33,6 @@ interface SandboxStore {
   setChatStatus: (status: ChatStatus) => void;
   setSandboxId: (id: string) => void;
   setStatus: (status: "running" | "stopped") => void;
-  setUrl: (url: string, uuid: string) => void;
   status?: "running" | "stopped";
   upsertCommand: (command: Omit<Command, "startedAt">) => void;
   url?: string;
@@ -82,7 +81,6 @@ export const useSandboxStore = create<SandboxStore>()((set) => ({
       generatedFiles: new Set<string>(),
     })),
   setStatus: (status) => set(() => ({ status })),
-  setUrl: (url, urlUUID) => set(() => ({ url, urlUUID })),
   upsertCommand: (cmd) => {
     set((state) => {
       const existingIdx = state.commands.findIndex(
@@ -101,7 +99,7 @@ export const useSandboxStore = create<SandboxStore>()((set) => ({
 export type ConjureDataPart = UIEvent;
 
 export function useDataStateMapper() {
-  const { addPaths, setSandboxId, setUrl, upsertCommand, addGeneratedFiles } =
+  const { addPaths, setSandboxId, upsertCommand, addGeneratedFiles } =
     useSandboxStore();
 
   return (data: ConjureDataPart) => {
@@ -132,8 +130,7 @@ export function useDataStateMapper() {
         }
         return;
       },
-      "data-get-sandbox-url": ({ data }) => {
-        if (data.url) setUrl(data.url, crypto.randomUUID());
+      "data-web-search": () => {
         return;
       },
       "data-researchUpdate": () => {

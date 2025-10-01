@@ -4,6 +4,7 @@ import { tool } from "ai";
 import z from "zod/v3";
 import { getRichError } from "../../../../utils/getRichError.js";
 import { emitUIEvent } from "../../../../utils/uiTransport.js";
+import prompt from "./prompt.js";
 
 interface Params {
   dataStream: UIMessageStreamWriter;
@@ -11,25 +12,18 @@ interface Params {
 
 export const createSandbox = ({ dataStream }: Params) =>
   tool({
-    description: "use this tool to create a sandbox",
+    description: prompt(),
     inputSchema: z.object({
       timeout: z
         .number()
-        .min(600000)
+        .min(300000)
         .max(2700000)
         .optional()
         .describe(
-          "Maximum time in milliseconds the Vercel Sandbox will remain active before automatically shutting down. Minimum 600000ms (10 minutes), maximum 2700000ms (45 minutes). Defaults to 600000ms (10 minutes). The sandbox will terminate all running processes when this timeout is reached."
-        ),
-      ports: z
-        .array(z.number())
-        .max(2)
-        .optional()
-        .describe(
-          "Array of network ports to expose and make accessible from outside the Vercel Sandbox. These ports allow web servers, APIs, or other services running inside the Vercel Sandbox to be reached externally. Common ports include 3000 (Next.js), 8000 (Python servers), 5000 (Flask), etc."
+          "Maximum time in milliseconds the sandbox will remain active before automatically shutting down. The sandbox will terminate all running processes when this timeout is reached."
         ),
     }),
-    execute: async ({ timeout, ports }, { toolCallId }) => {
+    execute: async ({ timeout }, { toolCallId }) => {
       emitUIEvent(dataStream, {
         id: toolCallId,
         type: "data-create-sandbox",
@@ -38,8 +32,7 @@ export const createSandbox = ({ dataStream }: Params) =>
 
       try {
         const sandbox = await Sandbox.create({
-          timeout: timeout ?? 600000,
-          ports,
+          timeout: timeout ?? 300_000,
         });
 
         emitUIEvent(dataStream, {
