@@ -41,6 +41,34 @@ export const createSandbox = ({ dataStream }: Params) =>
           data: { sandboxId: sandbox.sandboxId, status: "done" },
         });
 
+        try {
+          const listCommand = await sandbox.runCommand(
+            "find . -type f -not -path '*/.*' 2>/dev/null || true"
+          );
+          const result = await listCommand.wait();
+
+          if (result.exitCode === 0) {
+            const outputText = await result.output();
+            const paths = outputText
+              .split("\n")
+              .map((line: string) => line.trim())
+              .filter(
+                (line: string) => line.length > 0 && line.startsWith("./")
+              )
+              .map((line: string) => line.substring(2)); // Remove leading "./"
+
+            if (paths.length > 0) {
+              emitUIEvent(dataStream, {
+                id: toolCallId,
+                type: "data-generating-files",
+                data: { paths, status: "uploaded" },
+              });
+            }
+          }
+        } catch (listError) {
+          console.error("Could not list initial sandbox files:", listError);
+        }
+
         return (
           `Sandbox created with ID: ${sandbox.sandboxId}.` +
           `\nYou can now upload files, run commands, and access services on the exposed ports.`
